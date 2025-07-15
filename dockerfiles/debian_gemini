@@ -1,12 +1,18 @@
-FROM debian:bookworm
+FROM debian:bookworm-slim
+# 設定 DEBIAN_FRONTEND 為 noninteractive，避免安裝過程中需要使用者互動
 ARG DEBIAN_FRONTEND=noninteractive
+
+# 更新套件列表並升級已安裝的套件
 RUN apt-get clean && apt-get update && apt-get -y upgrade
-RUN apt-get -y install apt-utils gcc \
-	python3 vim unzip ping pico \
-	fakeroot dbus base whiptail hexedit \
-	patch wamerican ucf manpages \
-	file make dialog curl \
-	less cowsay netcat-openbsd
+
+# 安裝基本工具和程式語言，以及 lsb-release
+RUN apt-get -y install --no-install-recommends apt-utils gcc \
+    python3 vim unzip \
+    fakeroot dbus base whiptail hexedit \
+    patch wamerican ucf manpages \
+    file make dialog curl \
+    less cowsay \
+    sudo ping 
 
 # --- 安裝 AWS CLI ---
 # 建議使用 pip 安裝 AWS CLI，這是官方推薦的方式之一，更輕量且穩定
@@ -17,12 +23,21 @@ RUN apt-get install -y python3-pip && \
 # 安裝 ossutil (Aliyun OSS 工具)
 RUN curl https://gosspublic.alicdn.com/ossutil/install.sh | bash
 
+# 建立使用者並設定密碼
 RUN useradd -m user && echo "user:password" | chpasswd
+
+# 複製範例檔案並設定權限
 COPY --chown=user:user ./examples /home/user/examples
-RUN chmod -R +x  /home/user/examples/lua
-# We set WORKDIR, as this gets extracted by Webvm to be used as the cwd. This is optional.
+RUN chmod -R +x /home/user/examples/lua
+
+# 設定工作目錄
 WORKDIR /home/user/
-# We set env, as this gets extracted by Webvm. This is optional.
+
+# 設定環境變數
 ENV HOME="/home/user" TERM="xterm" USER="user" SHELL="/bin/bash" EDITOR="vim" LANG="en_US.UTF-8" LC_ALL="C"
+
+# 設定 root 密碼 (如果真的需要的話)
 RUN echo 'root:password' | chpasswd
+
+# 預設啟動命令
 CMD [ "/bin/bash" ]
