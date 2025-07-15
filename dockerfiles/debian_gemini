@@ -16,9 +16,8 @@ RUN apt-get -y install --no-install-recommends apt-utils dnsutils \
 
 # --- 安裝 AWS CLI ---
 # 建議使用 pip 安裝 AWS CLI，這是官方推薦的方式之一，更輕量且穩定
-RUN apt-get install -y python3-pip && \
-    pip3 install awscli
-
+RUN apt-get update && apt-get install -y python3-pip && \
+    pip3 install --break-system-packages awscli --no-cache-dir
 
 # 安裝 ossutil (Aliyun OSS 工具)
 RUN curl https://gosspublic.alicdn.com/ossutil/install.sh | bash
