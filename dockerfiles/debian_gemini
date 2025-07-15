@@ -12,7 +12,7 @@ RUN apt-get -y install --no-install-recommends apt-utils dnsutils \
     patch wamerican ucf manpages \
     file make dialog curl \
     less cowsay \
-    sudo ping pico
+    sudo iputils-ping alpine-pico
 
 # --- 安裝 AWS CLI ---
 # 建議使用 pip 安裝 AWS CLI，這是官方推薦的方式之一，更輕量且穩定
